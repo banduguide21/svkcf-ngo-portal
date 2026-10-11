@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SVKCF Portal | Section 8 ERP & Compliance MIS</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js CDN for reactive state management -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printable-receipt, #printable-receipt * { visibility: visible; }
+      #printable-receipt { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+    }
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased" x-data="ngoApp()" x-cloak>
+
+  <!-- TOP STATUTORY NOTICE BAR -->
+  <aside aria-label="Statutory compliance notice" class="bg-slate-900 text-slate-300 text-xs px-4 py-2 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
+    <div class="flex items-center gap-3">
+      <span class="bg-emerald-600 text-white font-bold px-2 py-0.5 rounded text-[10px]">SECTION 8 LICENSED</span>
+      <span><strong>CIN:</strong> U85300MH2022NPL382288</span>
+      <span class="hidden md:inline">|</span>
+      <span><strong>Darpan ID:</strong> MH/2022/0316230</span>
+      <span class="hidden md:inline">|</span>
+      <span><strong>ISO:</strong> 9001:2015 Certified</span>
+    </div>
+    <div class="flex items-center gap-4 text-emerald-400 font-medium">
+      <span><i class="fa-solid fa-shield-halved mr-1"></i> Section 135 & 80G Validated</span>
+      <span class="text-amber-400"><i class="fa-solid fa-lock mr-1"></i> Non-Profit Locked (0% Dividend Policy)</span>
+    </div>
+  </aside>
+
+  <div class="flex min-h-screen">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col justify-between shrink-0 shadow-xl">
+      <div>
+        <div class="p-5 border-b border-slate-800">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center font-black text-slate-950 text-xl shadow">
+              SV
+            </div>
+            <div>
+              <h1 class="text-sm font-bold tracking-wide text-white leading-tight">SIDDHI VINAYAK KRUPA</h1>
+              <p class="text-[11px] text-slate-400 font-medium">Charitable Foundation</p>
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-2 italic">A/121 Sector 6, Karanjade, Panvel, MH</p>
+        </div>
+
+        <nav class="p-3 space-y-1">
+          <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-chart-pie w-5 text-center"></i> Executive Dashboard
+          </button>
+          <button @click="currentTab = 'donors'" :class="currentTab === 'donors' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-hand-holding-dollar w-5 text-center"></i> Donor CRM & 80G
+          </button>
+          <button @click="currentTab = 'beneficiaries'" :class="currentTab === 'beneficiaries' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-user-graduate w-5 text-center"></i> Beneficiary Program MIS
+          </button>
+          <button @click="currentTab = 'accounting'" :class="currentTab === 'accounting' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-scale-balanced w-5 text-center"></i> Fund Accounting & Ledgers
+          </button>
+          <button @click="currentTab = 'compliance'" :class="currentTab === 'compliance' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-file-contract w-5 text-center"></i> Statutory & ROC Vault
+          </button>
+          <button @click="currentTab = 'hr_qms'" :class="currentTab === 'hr_qms' ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-300 hover:bg-slate-800'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition">
+            <i class="fa-solid fa-clipboard-check w-5 text-center"></i> HR & ISO 9001:2015 SOP
+          </button>
+        </nav>
+      </div>
+
+      <!-- Quick Status Footer -->
+      <div class="p-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
+        <div class="flex justify-between"><span>Audit Period:</span><strong class="text-white">FY 2025-26</strong></div>
+        <div class="flex justify-between"><span>Accrual Status:</span><span class="text-emerald-400 font-semibold">In Balance</span></div>
+        <div class="flex justify-between"><span>App Version:</span><span>v1.0.4-MVP</span></div>
+      </div>
+    </aside>
+
+    <!-- MAIN APP CONTENT AREA -->
+    <main class="flex-1 flex flex-col max-h-screen overflow-y-auto">
+      <!-- HEADER -->
+      <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shrink-0">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 capitalize" x-text="currentTab.replace('_', ' & ')"></h2>
+          <p class="text-xs text-slate-500">Integrated Section 8 Management & Quality Compliance Engine</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button @click="openQuickDonationModal = true" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-2 rounded shadow flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Record Donation
+          </button>
+          <button @click="openNewBeneficiaryModal = true" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded shadow flex items-center gap-2">
+            <i class="fa-solid fa-user-plus"></i> Enroll Candidate
+          </button>
+          <button @click="openVoucherModal = true" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold px-3 py-2 rounded shadow flex items-center gap-2">
+            <i class="fa-solid fa-receipt"></i> Create Voucher
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB CONTAINER -->
+      <div class="p-6 space-y-6 flex-1">
+
+        <!-- 1. EXECUTIVE DASHBOARD -->
+        <section x-show="currentTab === 'dashboard'" class="space-y-6">
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <span class="text-xs font-semibold uppercase text-slate-400">Restricted Project Funds</span>
+              <h3 class="text-2xl font-black text-slate-900 mt-2" x-text="formatINR(totalRestrictedFunds)"></h3>
+              <p class="text-[11px] text-emerald-600 font-medium mt-1"><i class="fa-solid fa-arrow-trend-up"></i> Earmarked for Vocational Batches</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <span class="text-xs font-semibold uppercase text-slate-400">Total Program Beneficiaries</span>
+              <h3 class="text-2xl font-black text-blue-600 mt-2" x-text="beneficiaries.length"></h3>
+              <p class="text-[11px] text-slate-500 mt-1">Vadodara, Surat, Ahmedabad, Panvel</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <span class="text-xs font-semibold uppercase text-slate-400">General Corpus Reserve</span>
+              <h3 class="text-2xl font-black text-slate-900 mt-2" x-text="formatINR(corpusFund)"></h3>
+              <p class="text-[11px] text-amber-600 font-medium mt-1"><i class="fa-solid fa-lock"></i> Permanent Capital Reserve</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <span class="text-xs font-semibold uppercase text-slate-400">QMS Compliance Health</span>
+              <h3 class="text-2xl font-black text-emerald-600 mt-2">100%</h3>
+              <p class="text-[11px] text-slate-500 mt-1">ISO 9001:2015 Clause 4-10 Adherent</p>
+            </div>
+          </div>
+
+          <!-- Active Projects & Fund Status -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+              <div class="flex justify-between items-center mb-4">
+                <h4 class="font-bold text-slate-900">Earmarked CSR Projects (Fund Allocation Matrix)</h4>
+                <span class="text-xs text-slate-500">Double-Entry Linked</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-100 text-slate-600">
+                      <th class="p-3">Project / Fund Code</th>
+                      <th class="p-3">Donor / Sponsor</th>
+                      <th class="p-3 text-right">Sanctioned</th>
+                      <th class="p-3 text-right">Disbursed</th>
+                      <th class="p-3 text-right">Balance</th>
+                      <th class="p-3 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="fund in projectFunds" :key="fund.fund_code">
+                      <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="p-3 font-semibold text-slate-800" x-text="fund.title"></td>
+                        <td class="p-3 text-slate-600" x-text="fund.donor_name"></td>
+                        <td class="p-3 text-right font-medium" x-text="formatINR(fund.allocated_budget)"></td>
+                        <td class="p-3 text-right text-rose-600 font-medium" x-text="formatINR(fund.disbursed_amount)"></td>
+                        <td class="p-3 text-right text-emerald-700 font-bold" x-text="formatINR(fund.allocated_budget - fund.disbursed_amount)"></td>
+                        <td class="p-3 text-center">
+                          <span class="px-2 py-0.5 rounded text-[10px] font-bold" :class="fund.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'" x-text="fund.status"></span>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Mandatory Statutory Deadlines -->
+            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+              <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-clock text-rose-500"></i> Regulatory Timelines
+              </h4>
+              <ul class="space-y-3 text-xs">
+                <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex justify-between items-center">
+                  <div>
+                    <strong class="block text-slate-800">Income Tax Form 10BD</strong>
+                    <span class="text-slate-500 text-[11px]">Annual Statement of Donations</span>
+                  </div>
+                  <span class="bg-rose-100 text-rose-800 font-bold px-2 py-1 rounded text-[10px]">Due May 31</span>
+                </li>
+                <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex justify-between items-center">
+                  <div>
+                    <strong class="block text-slate-800">ROC AOC-4 & MGT-7</strong>
+                    <span class="text-slate-500 text-[11px]">Financials & Annual Returns</span>
+                  </div>
+                  <span class="bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded text-[10px]">Due Oct 30</span>
+                </li>
+                <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex justify-between items-center">
+                  <div>
+                    <strong class="block text-slate-800">DIR-3 KYC Directors</strong>
+                    <span class="text-slate-500 text-[11px]">Ravi Patil & Ajay Patil</span>
+                  </div>
+                  <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-1 rounded text-[10px]">Active</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. DONOR MANAGEMENT & 80G RECEIPTING -->
+        <section x-show="currentTab === 'donors'" class="space-y-6">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Donor Directory & Contributions</h3>
+              <p class="text-xs text-slate-500">Issue instant 80G tax certificates and generate Form 10BD tables.</p>
+            </div>
+            <div class="flex gap-2">
+              <button @click="exportForm10BD()" class="border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3 py-2 rounded flex items-center gap-2">
+                <i class="fa-solid fa-file-excel text-emerald-600"></i> Export Form 10BD (CSV)
+              </button>
+              <button @click="openQuickDonationModal = true" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-2 rounded flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> New Donation
+              </button>
+            </div>
+          </div>
+
+          <!-- Donors Table -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                    <th class="p-3">Receipt No</th>
+                    <th class="p-3">Donor / Organization</th>
+                    <th class="p-3">Category</th>
+                    <th class="p-3">PAN No</th>
+                    <th class="p-3">Allocated Fund</th>
+                    <th class="p-3 text-right">Amount</th>
+                    <th class="p-3 text-center">80G Certificate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="d in donations" :key="d.receipt_no">
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                      <td class="p-3 font-mono font-bold text-slate-700" x-text="d.receipt_no"></td>
+                      <td class="p-3">
+                        <strong class="block text-slate-800" x-text="d.donor_name"></strong>
+                        <span class="text-slate-400 text-[11px]" x-text="d.email"></span>
+                      </td>
+                      <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700" x-text="d.donor_type"></span></td>
+                      <td class="p-3 font-mono font-semibold text-slate-700" x-text="d.pan_number"></td>
+                      <td class="p-3 text-slate-600" x-text="d.fund_title"></td>
+                      <td class="p-3 text-right font-bold text-slate-900" x-text="formatINR(d.amount)"></td>
+                      <td class="p-3 text-center">
+                        <button @click="printReceipt(d)" class="bg-slate-800 hover:bg-slate-950 text-white text-[11px] px-2.5 py-1 rounded shadow flex items-center gap-1 mx-auto">
+                          <i class="fa-solid fa-print"></i> 80G Receipt
+                        </button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. BENEFICIARY PROGRAM MIS -->
+        <section x-show="currentTab === 'beneficiaries'" class="space-y-6">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Beneficiary Management (Vocational Training & Empowerment)</h3>
+              <p class="text-xs text-slate-500">Track candidates, attendance rate, exams, and electrical toolkits.</p>
+            </div>
+            <button @click="openNewBeneficiaryModal = true" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded flex items-center gap-2">
+              <i class="fa-solid fa-plus"></i> Enroll Candidate
+            </button>
+          </div>
+
+          <!-- Beneficiary Table -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                    <th class="p-3">UBID</th>
+                    <th class="p-3">Beneficiary Name</th>
+                    <th class="p-3">District</th>
+                    <th class="p-3">Course / Trade</th>
+                    <th class="p-3">Sponsoring Project</th>
+                    <th class="p-3 text-center">Attendance</th>
+                    <th class="p-3 text-center">CSDC Exam</th>
+                    <th class="p-3 text-center">Toolkit Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="b in beneficiaries" :key="b.ubid">
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                      <td class="p-3 font-mono font-bold text-blue-700" x-text="b.ubid"></td>
+                      <td class="p-3">
+                        <strong class="block text-slate-800" x-text="b.name"></strong>
+                        <span class="text-slate-400 text-[11px]" x-text="'Age: ' + b.age + ' | ' + b.gender"></span>
+                      </td>
+                      <td class="p-3 text-slate-700" x-text="b.district"></td>
+                      <td class="p-3 text-slate-700" x-text="b.trade"></td>
+                      <td class="p-3 text-slate-600" x-text="b.project_fund_title"></td>
+                      <td class="p-3 text-center">
+                        <span class="font-bold" :class="b.attendance >= 80 ? 'text-emerald-600' : 'text-rose-600'" x-text="b.attendance + '%'"></span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold" :class="b.exam_passed ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'" x-text="b.exam_passed ? 'Passed (70%+)' : 'Under Assessment'"></span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <button @click="toggleToolkit(b)" class="px-2 py-1 rounded text-[10px] font-semibold border" :class="b.toolkit_disbursed ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-50 text-slate-600 border-slate-300'">
+                          <i class="fa-solid" :class="b.toolkit_disbursed ? 'fa-check text-emerald-600' : 'fa-box-open'"></i>
+                          <span x-text="b.toolkit_disbursed ? 'Disbursed' : 'Handover Kit'"></span>
+                        </button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. FUND ACCOUNTING & LEDGER -->
+        <section x-show="currentTab === 'accounting'" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <span class="text-[11px] font-bold uppercase text-slate-400">Total Program Outflows</span>
+              <p class="text-xl font-bold text-slate-900 mt-1" x-text="formatINR(totalOutflow)"></p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <span class="text-[11px] font-bold uppercase text-slate-400">Restricted Funds Balance</span>
+              <p class="text-xl font-bold text-emerald-600 mt-1" x-text="formatINR(totalRestrictedBalance)"></p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200">
+              <span class="text-[11px] font-bold uppercase text-slate-400">Total Net Assets (Corpus + General)</span>
+              <p class="text-xl font-bold text-blue-700 mt-1" x-text="formatINR(totalNetAssets)"></p>
+            </div>
+          </div>
+
+          <!-- Vouchers List -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div class="p-4 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-slate-800 text-sm">Voucher Ledger (Double Entry Audit Trail)</h4>
+                <p class="text-[11px] text-slate-500">Every disbursement enforces restricted fund & beneficiary traceability.</p>
+              </div>
+              <button @click="openVoucherModal = true" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded">
+                + New Voucher
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                    <th class="p-3">Voucher ID</th>
+                    <th class="p-3">Date</th>
+                    <th class="p-3">Account Head</th>
+                    <th class="p-3">Fund / Earmark</th>
+                    <th class="p-3">Beneficiary Tag</th>
+                    <th class="p-3 text-right">Debit</th>
+                    <th class="p-3 text-right">Credit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="v in vouchers" :key="v.voucher_id">
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                      <td class="p-3 font-mono font-bold text-slate-700" x-text="v.voucher_id"></td>
+                      <td class="p-3 text-slate-500" x-text="v.date"></td>
+                      <td class="p-3 font-semibold text-slate-800" x-text="v.head"></td>
+                      <td class="p-3 text-slate-600" x-text="v.fund_code"></td>
+                      <td class="p-3 font-mono text-slate-500" x-text="v.ubid || '-'"></td>
+                      <td class="p-3 text-right font-medium text-rose-600" x-text="v.type === 'DEBIT' ? formatINR(v.amount) : '-'"></td>
+                      <td class="p-3 text-right font-medium text-emerald-600" x-text="v.type === 'CREDIT' ? formatINR(v.amount) : '-'"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. STATUTORY & ROC REPOSITORY -->
+        <section x-show="currentTab === 'compliance'" class="space-y-6">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h3 class="text-base font-bold text-slate-900 mb-1">Section 8 Master Statutory Profile & Compliances</h3>
+            <p class="text-xs text-slate-500 mb-4">Mandatory MCA, RoC Mumbai, and Income Tax Department parameters.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-400 block font-semibold text-[10px]">CORPORATE IDENTITY NUMBER (CIN)</span>
+                <strong class="text-slate-800 text-sm font-mono">U85300MH2022NPL382288</strong>
+                <p class="text-[11px] text-slate-500 mt-1">Incorporated under Companies Act 2013 (RoC Mumbai/Panvel)</p>
+              </div>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-400 block font-semibold text-[10px]">NITI AAYOG DARPAN ID</span>
+                <strong class="text-slate-800 text-sm font-mono">MH/2022/0316230</strong>
+                <p class="text-[11px] text-slate-500 mt-1">Verified on NGO Darpan Portal</p>
+              </div>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-400 block font-semibold text-[10px]">INCOME TAX 12A & 80G URN</span>
+                <strong class="text-slate-800 text-sm font-mono">AAECS3982ME20214</strong>
+                <p class="text-[11px] text-slate-500 mt-1">Form 10AC Validated for Tax Exemption</p>
+              </div>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-400 block font-semibold text-[10px]">CSR-1 REGISTRATION NUMBER</span>
+                <strong class="text-slate-800 text-sm font-mono">CSR00031892</strong>
+                <p class="text-[11px] text-slate-500 mt-1">MCA Eligible for Corporate CSR Grants</p>
+              </div>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-400 block font-semibold text-[10px]">ISO 9001:2015 ACCREDITATION</span>
+                <strong class="text-slate-800 text-sm font-mono">QVA-SVCF-20-05100209</strong>
+                <p class="text-[11px] text-slate-500 mt-1">Quality Management System Standard</p>
+              </div>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded">
+                <span class="text-slate-400 block font-semibold text-[10px]">GOVERNING DIRECTORS</span>
+                <strong class="text-slate-800 text-sm">Ravi Baburao Patil & Ajay Ananta Patil</strong>
+                <p class="text-[11px] text-slate-500 mt-1">DIN Verified / Non-Remunerative</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. HR & ISO 9001:2015 SOP PORTAL -->
+        <section x-show="currentTab === 'hr_qms'" class="space-y-6">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <h3 class="text-base font-bold text-slate-900 mb-1">Standard Operating Procedures (ISO 9001:2015 QMS)</h3>
+            <p class="text-xs text-slate-500 mb-4">Digitized procedures ensuring zero audit non-conformances in educational and skill training drives.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">SOP-FLD-01</span>
+                <h4 class="font-bold text-slate-800 text-sm mt-2">Beneficiary Mobilization & Verification</h4>
+                <p class="text-xs text-slate-600 mt-1">Door-to-door, Gram Sabha meets (42 villages), ITI alumni verification. Enforces age check (18-45 yrs, up to 55 for technicians) and salted Aadhaar collection.</p>
+                <div class="mt-3 text-[11px] text-slate-500">ISO Clause: 8.2 & 8.5 (Service Provision)</div>
+              </div>
+              <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">SOP-HR-02</span>
+                <h4 class="font-bold text-slate-800 text-sm mt-2">Trainer Sourcing & Competence Screening</h4>
+                <p class="text-xs text-slate-600 mt-1">Mandatory ITI/Diploma in Electrical qualifications, 30-min mock demonstration scoring rubric, and background verification before assignment.</p>
+                <div class="mt-3 text-[11px] text-slate-500">ISO Clause: 7.2 (Competence & Evaluation)</div>
+              </div>
+              <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">SOP-FLD-03</span>
+                <h4 class="font-bold text-slate-800 text-sm mt-2">Material / Toolkit 3-Way Accounting Sync</h4>
+                <p class="text-xs text-slate-600 mt-1">Verification of >=80% batch attendance before electrical toolkit handover. Digital signature + geo-tagged photo upload links directly into Accounting debits.</p>
+                <div class="mt-3 text-[11px] text-slate-500">ISO Clause: 8.5.2 (Traceability)</div>
+              </div>
+              <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                <span class="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">SOP-QMS-04</span>
+                <h4 class="font-bold text-slate-800 text-sm mt-2">Internal Audit & CAPA Protocol</h4>
+                <p class="text-xs text-slate-600 mt-1">Root cause analysis via 5-Why framework for budget slips or document missing. 30-day corrective action completion timeline under Lead Auditor review.</p>
+                <div class="mt-3 text-[11px] text-slate-500">ISO Clause: 9.2 (Audit) & 10.2 (CAPA)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: QUICK DONATION & 80G GENERATION -->
+  <div x-show="openQuickDonationModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl" @click.away="openQuickDonationModal = false">
+      <h3 class="text-base font-bold text-slate-900 mb-2">Record Contribution & Issue 80G</h3>
+      <form @submit.prevent="saveDonation()" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Donor Name / Company</label>
+          <input type="text" x-model="formDonation.donor_name" required class="w-full border border-slate-300 rounded p-2 text-xs" placeholder="e.g. Polycab CSR Foundation" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Donor Category</label>
+            <select x-model="formDonation.donor_type" class="w-full border border-slate-300 rounded p-2 text-xs">
+              <option value="Corporate CSR">Corporate CSR</option>
+              <option value="Institutional">Institutional</option>
+              <option value="Individual Philanthropy">Individual Philanthropy</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">PAN Number (Mandatory for 80G)</label>
+            <input type="text" x-model="formDonation.pan_number" required maxlength="10" class="w-full border border-slate-300 rounded p-2 text-xs uppercase" placeholder="ABCDE1234F" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Email ID</label>
+          <input type="email" x-model="formDonation.email" required class="w-full border border-slate-300 rounded p-2 text-xs" placeholder="csr@company.com" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Contribution Amount (INR)</label>
+            <input type="number" x-model.number="formDonation.amount" required min="100" class="w-full border border-slate-300 rounded p-2 text-xs font-bold" />
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Allocate Project Fund</label>
+            <select x-model="formDonation.fund_code" class="w-full border border-slate-300 rounded p-2 text-xs">
+              <template x-for="f in projectFunds" :key="f.fund_code">
+                <option :value="f.fund_code" x-text="f.title"></option>
+              </template>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" @click="openQuickDonationModal = false" class="px-3 py-1.5 border rounded text-slate-600">Cancel</button>
+          <button type="submit" class="bg-emerald-700 text-white px-4 py-1.5 rounded font-bold">Post Entry & Credit Ledger</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NEW BENEFICIARY REGISTRATION -->
+  <div x-show="openNewBeneficiaryModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl" @click.away="openNewBeneficiaryModal = false">
+      <h3 class="text-base font-bold text-slate-900 mb-2">Enroll Beneficiary / Student Candidate</h3>
+      <form @submit.prevent="saveBeneficiary()" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Full Legal Name (as per Aadhaar)</label>
+          <input type="text" x-model="formBeneficiary.name" required class="w-full border border-slate-300 rounded p-2 text-xs" placeholder="Candidate Name" />
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Age (18-45)</label>
+            <input type="number" x-model.number="formBeneficiary.age" required min="18" max="55" class="w-full border border-slate-300 rounded p-2 text-xs" />
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Gender</label>
+            <select x-model="formBeneficiary.gender" class="w-full border border-slate-300 rounded p-2 text-xs">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">District</label>
+            <select x-model="formBeneficiary.district" class="w-full border border-slate-300 rounded p-2 text-xs">
+              <option value="Vadodara">Vadodara</option>
+              <option value="Surat">Surat</option>
+              <option value="Ahmedabad">Ahmedabad</option>
+              <option value="Panvel">Panvel</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Training Trade</label>
+          <input type="text" x-model="formBeneficiary.trade" required class="w-full border border-slate-300 rounded p-2 text-xs" value="CSDC Electrical Helper" />
+        </div>
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Sponsoring Project Fund</label>
+          <select x-model="formBeneficiary.fund_code" class="w-full border border-slate-300 rounded p-2 text-xs">
+            <template x-for="f in projectFunds" :key="f.fund_code">
+              <option :value="f.fund_code" x-text="f.title"></option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" @click="openNewBeneficiaryModal = false" class="px-3 py-1.5 border rounded text-slate-600">Cancel</button>
+          <button type="submit" class="bg-blue-700 text-white px-4 py-1.5 rounded font-bold">Complete Registration</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE ACCOUNTING VOUCHER -->
+  <div x-show="openVoucherModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl" @click.away="openVoucherModal = false">
+      <h3 class="text-base font-bold text-slate-900 mb-2">Create Expenditure Voucher</h3>
+      <form @submit.prevent="saveVoucher()" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Account Head</label>
+          <select x-model="formVoucher.head" class="w-full border border-slate-300 rounded p-2 text-xs">
+            <option value="Program Direct - Electrical Toolkits">Program Direct - Electrical Toolkits</option>
+            <option value="Trainer Faculty Honorarium">Trainer Faculty Honorarium</option>
+            <option value="Center Rent & Utilities">Center Rent & Utilities</option>
+            <option value="Admin & Statutory Audit Fees">Admin & Statutory Audit Fees</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Debit Amount (INR)</label>
+            <input type="number" x-model.number="formVoucher.amount" required min="10" class="w-full border border-slate-300 rounded p-2 text-xs font-bold" />
+          </div>
+          <div>
+            <label class="block text-slate-600 font-semibold mb-1">Fund Earmark</label>
+            <select x-model="formVoucher.fund_code" class="w-full border border-slate-300 rounded p-2 text-xs">
+              <template x-for="f in projectFunds" :key="f.fund_code">
+                <option :value="f.fund_code" x-text="f.fund_code"></option>
+              </template>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-600 font-semibold mb-1">Link Beneficiary UBID (Optional)</label>
+          <input type="text" x-model="formVoucher.ubid" class="w-full border border-slate-300 rounded p-2 text-xs" placeholder="e.g. UBID-2026-101" />
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" @click="openVoucherModal = false" class="px-3 py-1.5 border rounded text-slate-600">Cancel</button>
+          <button type="submit" class="bg-amber-700 text-white px-4 py-1.5 rounded font-bold">Post Voucher to Ledger</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PRINTABLE 80G TAX DEDUCTION CERTIFICATE MODAL -->
+  <div x-show="openReceiptModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-2xl w-full p-8 shadow-2xl relative">
+      <button @click="openReceiptModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <!-- Printable Area -->
+      <div id="printable-receipt" class="p-4 border-2 border-slate-800 text-slate-900 font-serif">
+        <div class="text-center border-b pb-4">
+          <h2 class="text-xl font-bold uppercase tracking-wider">SIDDHI VINAYAK KRUPA CHARITABLE FOUNDATION</h2>
+          <p class="text-xs font-sans mt-1">CIN: U85300MH2022NPL382288 | NITI Aayog NGO Darpan: MH/2022/0316230</p>
+          <p class="text-[11px] font-sans text-slate-600">Registered Office: Flat A/121, Sector 6, Karanjade, Panvel, Navi Mumbai, MH - 410206</p>
+          <p class="text-[11px] font-sans font-bold text-emerald-800 mt-1">Form 10AC URN: AAECS3982ME20214 | Section 80G Certified</p>
+        </div>
+
+        <div class="my-4 text-center">
+          <span class="inline-block px-3 py-1 bg-slate-100 font-sans font-bold text-xs uppercase border border-slate-300">
+            DONATION RECEIPT UNDER SECTION 80G OF THE INCOME TAX ACT, 1961
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-xs font-sans my-4">
+          <div>
+            <p><strong>Receipt Number:</strong> <span x-text="activeReceipt.receipt_no"></span></p>
+            <p><strong>Date of Receipt:</strong> <span x-text="activeReceipt.date"></span></p>
+            <p><strong>Donor Name:</strong> <span x-text="activeReceipt.donor_name"></span></p>
+            <p><strong>Donor PAN:</strong> <span x-text="activeReceipt.pan_number"></span></p>
+          </div>
+          <div>
+            <p><strong>Contribution Amount:</strong> <span class="font-bold text-sm" x-text="formatINR(activeReceipt.amount)"></span></p>
+            <p><strong>Mode of Payment:</strong> Bank Transfer / NEFT</p>
+            <p><strong>Earmarked Purpose:</strong> <span x-text="activeReceipt.fund_title"></span></p>
+            <p><strong>Tax Deduction:</strong> Eligible under Sec 80G(5)(vi)</p>
+          </div>
+        </div>
+
+        <div class="border-t pt-4 mt-6 flex justify-between items-end font-sans text-xs">
+          <div class="text-[10px] text-slate-500 max-w-xs">
+            Note: This receipt is valid for claiming tax exemption under Section 80G. Particulars of this donation will be reported in Form 10BD to the Director of Income Tax (Exemptions).
+          </div>
+          <div class="text-center">
+            <div class="h-10 border-b border-slate-400 w-36 mb-1 flex items-center justify-center italic text-slate-400 text-[10px]">
+              Digitally Authorized
+            </div>
+            <strong class="block text-[11px]">Authorized Trustee / Signatory</strong>
+            <span class="text-[10px] text-slate-500">For Siddhi Vinayak Krupa CF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6 print:hidden">
+        <button @click="openReceiptModal = false" class="px-4 py-2 border rounded text-xs text-slate-600">Close</button>
+        <button onclick="window.print()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded text-xs flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> Print Official 80G PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION CONTROLLER & LOGIC -->
+  <script>
+    function ngoApp() {
+      return {
+        currentTab: 'dashboard',
+        openQuickDonationModal: false,
+        openNewBeneficiaryModal: false,
+        openVoucherModal: false,
+        openReceiptModal: false,
+        activeReceipt: {},
+
+        // Form bindings
+        formDonation: {
+          donor_name: '',
+          donor_type: 'Corporate CSR',
+          pan_number: '',
+          email: '',
+          amount: 500000,
+          fund_code: 'RF-ELEC-2026'
+        },
+        formBeneficiary: {
+          name: '',
+          age: 22,
+          gender: 'Male',
+          district: 'Vadodara',
+          trade: 'CSDC QP ELE/Q4701 Electrical Helper',
+          fund_code: 'RF-ELEC-2026'
+        },
+        formVoucher: {
+          head: 'Program Direct - Electrical Toolkits',
+          amount: 25000,
+          fund_code: 'RF-ELEC-2026',
+          ubid: ''
+        },
+
+        // Base Data
+        corpusFund: 1500000,
+        projectFunds: [
+          {
+            fund_code: 'RF-ELEC-2026',
+            title: 'Electrician Skill & Livelihood Program',
+            donor_name: 'Polycab CSR Initiative',
+            allocated_budget: 1800000,
+            disbursed_amount: 1120000,
+            status: 'Active'
+          },
+          {
+            fund_code: 'RF-EDU-2026',
+            title: 'K-12 School Educational Upliftment',
+            donor_name: 'Institutional Grant',
+            allocated_budget: 650000,
+            disbursed_amount: 320000,
+            status: 'Active'
+          }
+        ],
+
+        donations: [
+          {
+            receipt_no: '80G-2026-081',
+            date: '2026-03-15',
+            donor_name: 'Polycab CSR Division',
+            donor_type: 'Corporate CSR',
+            pan_number: 'AAACP9821K',
+            email: 'csr@polycab.com',
+            amount: 1200000,
+            fund_code: 'RF-ELEC-2026',
+            fund_title: 'Electrician Skill & Livelihood Program'
+          },
+          {
+            receipt_no: '80G-2026-082',
+            date: '2026-03-22',
+            donor_name: 'Rajesh Shah Philanthropic Trust',
+            donor_type: 'Institutional',
+            pan_number: 'AAATR4512P',
+            email: 'trustee@shahfoundation.org',
+            amount: 350000,
+            fund_code: 'RF-EDU-2026',
+            fund_title: 'K-12 School Educational Upliftment'
+          }
+        ],
+
+        beneficiaries: [
+          {
+            ubid: 'UBID-2026-01',
+            name: 'Ramesh Naresh Pawar',
+            age: 24,
+            gender: 'Male',
+            district: 'Surat',
+            trade: 'CSDC Electrical Helper',
+            project_fund_title: 'Electrician Skill & Livelihood Program',
+            attendance: 94,
+            exam_passed: true,
+            toolkit_disbursed: true
+          },
+          {
+            ubid: 'UBID-2026-02',
+            name: 'Kavita Dharmendra Bhatt',
+            age: 26,
+            gender: 'Female',
+            district: 'Vadodara',
+            trade: 'CSDC Electrical Helper',
+            project_fund_title: 'Electrician Skill & Livelihood Program',
+            attendance: 88,
+            exam_passed: true,
+            toolkit_disbursed: false
+          },
+          {
+            ubid: 'UBID-2026-03',
+            name: 'Nitin Akash More',
+            age: 21,
+            gender: 'Male',
+            district: 'Ahmedabad',
+            trade: 'CSDC Electrical Helper',
+            project_fund_title: 'Electrician Skill & Livelihood Program',
+            attendance: 74,
+            exam_passed: false,
+            toolkit_disbursed: false
+          }
+        ],
+
+        vouchers: [
+          {
+            voucher_id: 'VOU-2026-041',
+            date: '2026-03-20',
+            head: 'Program Direct - Electrical Toolkits',
+            fund_code: 'RF-ELEC-2026',
+            ubid: 'UBID-2026-01',
+            type: 'DEBIT',
+            amount: 8500
+          },
+          {
+            voucher_id: 'VOU-2026-042',
+            date: '2026-03-21',
+            head: 'Trainer Faculty Honorarium',
+            fund_code: 'RF-ELEC-2026',
+            ubid: '',
+            type: 'DEBIT',
+            amount: 35000
+          },
+          {
+            voucher_id: 'VOU-2026-043',
+            date: '2026-03-22',
+            head: 'Restricted Grant Inflow',
+            fund_code: 'RF-EDU-2026',
+            ubid: '',
+            type: 'CREDIT',
+            amount: 350000
+          }
+        ],
+
+        // Computed properties
+        get totalRestrictedFunds() {
+          return this.projectFunds.reduce((sum, f) => sum + f.allocated_budget, 0);
+        },
+        get totalOutflow() {
+          return this.vouchers.filter(v => v.type === 'DEBIT').reduce((sum, v) => sum + v.amount, 0);
+        },
+        get totalRestrictedBalance() {
+          return this.projectFunds.reduce((sum, f) => sum + (f.allocated_budget - f.disbursed_amount), 0);
+        },
+        get totalNetAssets() {
+          return this.corpusFund + this.totalRestrictedBalance;
+        },
+
+        // Helper formatters
+        formatINR(val) {
+          return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val || 0);
+        },
+
+        // Actions
+        saveDonation() {
+          const selectedFund = this.projectFunds.find(f => f.fund_code === this.formDonation.fund_code);
+          const newReceipt = '80G-2026-' + (this.donations.length + 83);
+          const record = {
+            receipt_no: newReceipt,
+            date: new Date().toISOString().split('T')[0],
+            donor_name: this.formDonation.donor_name,
+            donor_type: this.formDonation.donor_type,
+            pan_number: this.formDonation.pan_number.toUpperCase(),
+            email: this.formDonation.email,
+            amount: this.formDonation.amount,
+            fund_code: this.formDonation.fund_code,
+            fund_title: selectedFund ? selectedFund.title : 'General Restricted Fund'
+          };
+          this.donations.unshift(record);
+
+          // Fund Accounting Sync: Add to project fund budget
+          if (selectedFund) {
+            selectedFund.allocated_budget += this.formDonation.amount;
+          }
+
+          // Ledger credit entry
+          this.vouchers.unshift({
+            voucher_id: 'VOU-2026-' + (this.vouchers.length + 50),
+            date: record.date,
+            head: 'Donation Inflow (80G)',
+            fund_code: record.fund_code,
+            ubid: '',
+            type: 'CREDIT',
+            amount: record.amount
+          });
+
+          this.openQuickDonationModal = false;
+          alert('Donation recorded successfully. Restricted Project Fund updated & 80G receipt issued.');
+        },
+
+        saveBeneficiary() {
+          const selectedFund = this.projectFunds.find(f => f.fund_code === this.formBeneficiary.fund_code);
+          const newUbid = 'UBID-2026-0' + (this.beneficiaries.length + 1);
+          this.beneficiaries.unshift({
+            ubid: newUbid,
+            name: this.formBeneficiary.name,
+            age: this.formBeneficiary.age,
+            gender: this.formBeneficiary.gender,
+            district: this.formBeneficiary.district,
+            trade: this.formBeneficiary.trade,
+            project_fund_title: selectedFund ? selectedFund.title : 'Vocational Project',
+            attendance: 100,
+            exam_passed: false,
+            toolkit_disbursed: false
+          });
+          this.openNewBeneficiaryModal = false;
+          alert('Beneficiary successfully enrolled with ID ' + newUbid);
+        },
+
+        saveVoucher() {
+          const fund = this.projectFunds.find(f => f.fund_code === this.formVoucher.fund_code);
+          if (fund) {
+            if (fund.allocated_budget - fund.disbursed_amount < this.formVoucher.amount) {
+              alert('Error: Restricted Fund balance insufficient. Expense exceeds authorized donor allocation.');
+              return;
+            }
+            fund.disbursed_amount += this.formVoucher.amount;
+          }
+          this.vouchers.unshift({
+            voucher_id: 'VOU-2026-' + (this.vouchers.length + 45),
+            date: new Date().toISOString().split('T')[0],
+            head: this.formVoucher.head,
+            fund_code: this.formVoucher.fund_code,
+            ubid: this.formVoucher.ubid,
+            type: 'DEBIT',
+            amount: this.formVoucher.amount
+          });
+          this.openVoucherModal = false;
+          alert('Debit voucher posted to ledger and project fund balance deducted.');
+        },
+
+        toggleToolkit(b) {
+          b.toolkit_disbursed = !b.toolkit_disbursed;
+          if (b.toolkit_disbursed) {
+            // Auto post accounting voucher
+            const kitVoucher = {
+              voucher_id: 'VOU-2026-' + (this.vouchers.length + 46),
+              date: new Date().toISOString().split('T')[0],
+              head: 'Program Direct - Electrical Toolkits',
+              fund_code: 'RF-ELEC-2026',
+              ubid: b.ubid,
+              type: 'DEBIT',
+              amount: 8500
+            };
+            this.vouchers.unshift(kitVoucher);
+            const fund = this.projectFunds.find(f => f.fund_code === 'RF-ELEC-2026');
+            if (fund) fund.disbursed_amount += 8500;
+          }
+        },
+
+        printReceipt(donation) {
+          this.activeReceipt = donation;
+          this.openReceiptModal = true;
+        },
+
+        exportForm10BD() {
+          let csv = 'URN,Financial Year,Donor Name,Donor ID Type,Donor ID (PAN),Address,Donation Type,Mode,Amount\n';
+          this.donations.forEach(d => {
+            csv += `AAECS3982ME20214,2025-2026,"${d.donor_name}",PAN,${d.pan_number},"India",Specific Grants,Electronic,${d.amount}\n`;
+          });
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.setAttribute('href', url);
+          a.setAttribute('download', 'Form_10BD_Donations_Report.csv');
+          a.click();
+        }
+      };
+    }
+  </script>
+</body>
+</html>
